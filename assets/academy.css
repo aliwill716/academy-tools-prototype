@@ -41,7 +41,7 @@ body{background:var(--academy-bg)!important;}
 .academy-eyebrow i{width:8px;height:8px;border-radius:2px;background:var(--academy-yellow);display:inline-block;}
 .academy-hero h1{font-family:'Gowun Batang',Georgia,serif!important;font-size:clamp(40px,6vw,72px)!important;line-height:1.02!important;letter-spacing:-.045em!important;margin:18px 0 14px!important;color:#fff!important;font-weight:400!important;}
 .academy-hero p{max-width:720px;font-size:17px;line-height:1.65;color:rgba(255,255,255,.9);margin:0;}
-.academy-hero-logo{display:block;width:180px;max-width:100%;height:auto;margin:0 auto;}
+.academy-hero-logo{display:block;width:132px;max-width:100%;height:auto;margin:0 auto;}
 
 .academy-main{max-width:1120px;margin:0 auto;padding:38px 28px 80px;}
 .academy-intro{display:flex;justify-content:space-between;align-items:end;gap:28px;margin-bottom:22px;}
@@ -68,7 +68,7 @@ body.tool-page header.hero{background:linear-gradient(135deg,#2f79c9,#4287FF)!im
 body.tool-page header.hero:after{content:"";position:absolute;right:6%;top:30px;width:180px;height:180px;border:22px solid rgba(255,255,255,.08);transform:rotate(30deg);pointer-events:none;}
 body.tool-page header.hero{position:relative;overflow:hidden;}
 body.tool-page header.hero h1{font-family:'Gowun Batang',Georgia,serif!important;font-weight:400!important;font-size:42px!important;letter-spacing:-.035em!important;}
-body.tool-page[data-tool='permissions'] header.hero h1{line-height:1.18!important;letter-spacing:-.025em!important;margin:0 0 14px!important;}
+body.tool-page[data-tool='permissions'] header.hero h1{line-height:1.18!important;letter-spacing:.02em!important;margin:0 0 14px!important;}
 body.tool-page[data-tool='permissions'] header.hero p{max-width:760px;line-height:1.65;}
 body.tool-page .brand{display:none!important;}
 body.tool-page .searchbar button,
