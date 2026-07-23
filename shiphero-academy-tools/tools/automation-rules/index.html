@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShipHero Automation Rules Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ShipHero brand */
+    --red:        #EF5C59;
+    --orange:     #F17B3E;
+    --yellow:     #F6B808;
+    --brown:      #4C1D1D;
+    --dark-blue:  #324F80;
+    --blue:       #4287FF;
+    --light-blue: #F0F6FE;
+
+    --white:      #FFFFFF;
+    --bg:         #F9F9F9;
+    --border:     #E5E5E5;
+    --grey-mid:   #7C7C7C;
+    --grey-dark:  #4C4C4C;
+    --black:      #000000;
+
+    --success:    #25820C;
+    --success-bg: #F0FDF4;
+
+    --radius:     10px;
+    --radius-sm:  6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Figtree', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--grey-dark);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--dark-blue);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--red);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .header-text h1 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -.01em;
+  }
+  .header-text p {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  /* ── Tab bar ── */
+  .tab-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .tab {
+    padding: 14px 18px 13px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--grey-mid);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: color .15s, border-color .15s;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--dark-blue); }
+  .tab.active {
+    color: var(--dark-blue);
+    border-bottom-color: var(--red);
+  }
+  .count-pill {
+    display: inline-flex;
+    align-items: center;
+    background: var(--light-blue);
+    color: var(--dark-blue);
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* ── Controls bar ── */
+  .controls {
+    padding: 20px 40px 0;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 240px;
+    max-width: 440px;
+  }
+  .search-wrap svg {
+    position: absolute; left: 13px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--grey-mid); pointer-events: none;
+  }
+  .search-wrap input {
+    width: 100%;
+    padding: 10px 14px 10px 40px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 0.9rem;
+    background: var(--white);
+    color: var(--grey-dark);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .search-wrap input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(66,135,255,.12);
+  }
+  .search-wrap input::placeholder { color: var(--grey-mid); }
+  select {
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 0.87rem;
+    color: var(--grey-dark);
+    background: var(--white);
+    outline: none;
+    cursor: pointer;
+    min-width: 180px;
+    transition: border-color .15s;
+  }
+  select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(66,135,255,.12);
+  }
+  .result-count {
+    font-size: 0.82rem;
+    color: var(--grey-mid);
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  /* ── Column labels ── */
+  .col-labels {
+    display: grid;
+    gap: 16px;
+    padding: 14px 20px 6px;
+    margin: 16px 40px 4px;
+    border-bottom: 2px solid var(--border);
+  }
+  .col-labels.t-cols { grid-template-columns: 250px 1fr 24px; }
+  .col-labels.a-cols { grid-template-columns: 250px 1fr 24px; }
+  .col-label {
+    font-size: 0.67rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--grey-mid);
+  }
+
+  /* ── Cards ── */
+  .cards {
+    padding: 8px 40px 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  /* Flush list style — cards share borders */
+  .card {
+    background: var(--white);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+  .cards .card:first-child { border-top: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; }
+  .cards .card:last-child  { border-radius: 0 0 var(--radius) var(--radius); }
+  .cards .card:only-child  { border-radius: var(--radius); border-top: 1px solid var(--border); }
+  .card:hover { background: var(--light-blue); }
+  .card.open  { background: var(--white); }
+
+  /* ── Card header row ── */
+  .card-header {
+    display: grid;
+    gap: 16px;
+    align-items: start;
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .card-header.t-row { grid-template-columns: 250px 1fr 24px; }
+  .card-header.a-row { grid-template-columns: 250px 1fr 24px; }
+
+  .name-cell {
+    display: flex; flex-direction: column; gap: 5px; min-width: 0;
+  }
+  .item-name {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--black);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .desc-preview {
+    font-size: 0.85rem;
+    color: var(--grey-mid);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 2px;
+  }
+
+  /* Chevron */
+  .chevron { display: flex; justify-content: flex-end; padding-top: 2px; }
+  .chevron svg { transition: transform .2s; color: var(--grey-mid); }
+  .card.open .chevron svg { transform: rotate(180deg); color: var(--dark-blue); }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    border-radius: var(--radius-sm);
+    font-size: 0.71rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    white-space: nowrap;
+    width: fit-content;
+    letter-spacing: .01em;
+  }
+  /* MWA badge — yellow/amber */
+  .badge.mw {
+    background: #FFF8E1;
+    color: #7A5800;
+    border: 1px solid #F6B808;
+  }
+  /* Category badge — subtle teal-green */
+  .badge.cat {
+    background: var(--success-bg);
+    color: var(--success);
+    border: 1px solid #BBF0B0;
+  }
+
+  /* ── Expanded body ── */
+  .card-body {
+    display: none;
+    padding: 4px 20px 20px;
+    border-top: 1px solid var(--border);
+    background: var(--white);
+  }
+  .card.open .card-body { display: block; }
+
+  .field { margin-top: 16px; }
+  .field-lbl {
+    font-size: 0.67rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--grey-mid);
+    margin-bottom: 6px;
+  }
+  .field-val {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--grey-dark);
+  }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+
+  /* ── Empty state ── */
+  .empty {
+    text-align: center;
+    padding: 64px 20px;
+    color: var(--grey-mid);
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 8px 40px;
+  }
+  .empty svg { margin: 0 auto 14px; display: block; opacity: .25; }
+  .empty p { font-size: 0.95rem; }
+
+  mark {
+    background: #FFF176;
+    border-radius: 2px;
+    padding: 0 2px;
+    color: inherit;
+  }
+
+  @media (max-width: 700px) {
+    header { padding: 16px 20px; }
+    .tab-bar { padding: 0 20px; }
+    .controls, .cards { padding-left: 20px; padding-right: 20px; }
+    .col-labels { margin-left: 20px; margin-right: 20px; display: none; }
+    .card-header.t-row,
+    .card-header.a-row { grid-template-columns: 1fr 24px; }
+    .desc-preview { display: none; }
+    select { min-width: 0; width: 100%; }
+    .result-count { margin-left: 0; }
+  }
+</style>
+<link rel="stylesheet" href="../../assets/academy.css">
+</head>
+<body class="tool-page academy-shell" data-tool="automation-rules">
+<header class="academy-topbar academy-shell">
+  <a class="academy-brand" href="../../"><span class="academy-mark">S</span><span>ShipHero Academy</span></a>
+  <nav class="academy-nav" aria-label="Learning tools">
+    <a href="../../">Tools home</a>
+    <a href="../automation-rules/" aria-current="page">Automation rules</a>
+    <a href="../permissions/">Permissions</a>
+  </nav>
+</header>
+
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M4 5.5h12M4 10h8M4 14.5h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1>Automation Rules Reference</h1>
+      <p>ShipHero — All available triggers and actions</p>
+    </div>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="switchTab('triggers')" id="tab-triggers">
+    Triggers <span class="count-pill" id="cnt-triggers">52</span>
+  </div>
+  <div class="tab" onclick="switchTab('actions')" id="tab-actions">
+    Actions <span class="count-pill" id="cnt-actions">58</span>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="text" id="search" placeholder="Search triggers…" oninput="render()" autocomplete="off">
+  </div>
+  <select id="cat-filter" onchange="render()" style="display:none">
+    <option value="">All categories</option>
+    <option value="Edit Order Info">Edit Order Info</option><option value="External Integrations">External Integrations</option><option value="Internal Notes">Internal Notes</option><option value="International Orders">International Orders</option><option value="Line Items">Line Items</option><option value="Order Allocation">Order Allocation</option><option value="Order Holds">Order Holds</option><option value="Order Processing">Order Processing</option><option value="Return Options">Return Options</option><option value="Shipping Options">Shipping Options</option>
+  </select>
+  <span class="result-count" id="result-count"></span>
+</div>
+
+<div class="col-labels t-cols" id="col-lbl-t">
+  <span class="col-label">Trigger</span>
+  <span class="col-label">Description</span>
+  <span></span>
+</div>
+<div class="col-labels a-cols" id="col-lbl-a" style="display:none">
+  <span class="col-label">Action</span>
+  <span class="col-label">Description</span>
+  <span></span>
+</div>
+
+<div class="cards" id="cards"></div>
+
+<script>
+const TRIGGERS = [{"name": "Address 1", "description": "Shipping Address Line 1 on an order.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Address 2", "description": "Shipping Address Line 2 on an order.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "All items allocated to warehouse", "description": "Can only run after Multi Warehouse Allocation rules. All items on the order must be allocated to the same warehouse. If items are backordered and \"Allow Partial\" is not enabled, then this rule cannot run. Available warehouses are presented in a list for the end user to select.", "conditions": "Equals, not equals, in list, not in list.", "multiWarehouse": "Yes"}, {"name": "All items in the order are from vendor", "description": "All items on the order must be assigned to the same vendor. Note that items can be assigned to multiple vendors in ShipHero, that is okay. The original intent of this rule was for dropshipping purposes, but another common use case for it is when there is a specific group of SKUs that must trigger a rule. For a Non Multi warehouse account, this is the only way to trigger on ALL items matching a condition. (most other rules run when any item matches a condition). Available vendors are presented in a list and the end user selects the vendor from the list.", "conditions": "Equals, not equals.", "multiWarehouse": "No"}, {"name": "All product dimensions in inches", "description": "Looks at the dimensions of all products on an order, including those set to automatically fulfill. If any one dimension on any product on an order (L,W,or H) does not fit the trigger, the rule will not run.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "Allocated Warehouse Count", "description": "Can only run after Multi Warehouse Allocation rules. Triggers based on the total number of warehouses that have at least one item allocated on this order. Use this to apply different logic when an order is split across multiple warehouses (e.g., special processing when allocation spans 2 or more warehouses).", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "Yes"}, {"name": "Any item allocated to warehouse", "description": "Can only run after Multi Warehouse Allocation rules. Any item on an order must be allocated to the warehouse defined in the trigger. Warehouse is selected in prefilled dropdown by the end user.", "conditions": "Equals, not equals, in list, not in list.", "multiWarehouse": "Yes"}, {"name": "Any item back ordered to warehouse", "description": "Can only run after Multi Warehouse Allocation rules. Any item on an order must be backordered to the warehouse defined in the trigger. Warehouse is selected in prefilled dropdown by the end user.", "conditions": "Equals, not equals, in list, not in list.", "multiWarehouse": "Yes"}, {"name": "Any items in the order are from vendor", "description": "Any item in the order is assigned to the vendor defined in the trigger. Available vendors are presented in a list and the end user selects the vendor from the list.", "conditions": "Equals, not equals.", "multiWarehouse": "No"}, {"name": "Any product dimension in inches", "description": "Any dimension (L,W,orH) on any product on the order will trigger this, including SKUs set as autofulfill.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "City", "description": "Shipping City on an order as part of shipping address.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Company", "description": "Company listed on shipping address on an order.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Country", "description": "Country listed on the shipping address of an order. Always expressed as the two digit country code.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Customer orders count", "description": "The Customer Order Count trigger will allow you to create a rule based on how many previous orders have been placed by a customer. This number originates from Shopify store data and will not work the same in other store platforms. Automation rules run when the order is generated. Orders generated before the creation of an automation rule will not be affected retroactively.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "Day of Week (0:Sun, 1:Mon, etc.)", "description": "Use the indicated number to represent the day of the week (0 for sunday, 1 for monday, etc). When an order imports on that day of the week the rule will run.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Email", "description": "Customer email. This is found on the Billing Address.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Has Address Hold", "description": "If an order has an address hold the rule will run. Can be set via an earlier automation rule or from the address validator.", "conditions": "Yes, no.", "multiWarehouse": ""}, {"name": "Has Fraud Hold", "description": "If an order has a fraud hold the rule will run. Can be set via fraud settings in Shopify or via previous automation rule.", "conditions": "Yes, no.", "multiWarehouse": ""}, {"name": "Has Operator Hold", "description": "If an order has an operator hold the rule will run. Must be set from a previous automation rule.", "conditions": "Yes, no.", "multiWarehouse": ""}, {"name": "Has Payment Hold", "description": "If an order has a payment hold the rule will run. Can be set via Shopify store settings or from previous automation.", "conditions": "Yes, no.", "multiWarehouse": ""}, {"name": "Item bin location", "description": "Rule triggers when an item on the order is assigned to the bin location defined in the trigger. This trigger is unreliable and not recommended to be used unless inventory is only ever assigned to one location in the warehouse, however, due to the dynamic nature of slotting and the amount of manual work required to keep location assignments restricted to one bin, this rule is very limited in what it can accomplish.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "No items allocated to warehouse", "description": "Only runs after Multi Warehouse Allocation rules. No items on the order are allocated to the warehouse defined in the trigger.", "conditions": "Equals, not equals, in list, not in list.", "multiWarehouse": "Yes"}, {"name": "Number of pending line items", "description": "Looks at the total number of pending line items on an order. A pending line item is a line item that is not canceled or fulfilled. This does not look at the sum of the line item quantities, just the number of open lines total.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "Number of unique SKUs", "description": "Looks at the number of unique SKUs on an order, regardless of status (pending, canceled, fulfilled). It's important to note that with some integrations the same SKU can be present on multiple lines, which is another way to differentiate this rule from pending line items.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "Order date and time", "description": "Looks at date and time of when order imports (based on customer time zone as set in the settings)", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "Order number", "description": "Order number triggers the rule. equals and starts with are exact matches, so if the order number starts with a hash (#) that must be included in the \"starts with\" field. Requires a minimum of two characters.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Order Profile", "description": "The profile assigned to the order. This could be set by default from the store settings page or could be assigned from an earlier automation rule.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Order Tag", "description": "This is a tag on an order. These can be added in Shopify or can be added from the actions of a previous rule. Tags importing from Shopify will always start with the words \"Shopify tag\".", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Order Total", "description": "Triggers off the total price of the order. Listed as \"Total\" on the order page.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "Phone Number", "description": "Looks at the phone number in the customer shipping address.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Product name", "description": "Product name as it appears on the order.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Product tag", "description": "Product tag. May be added in ShipHero or Shopify. All Shopify tags start with the words \"Shopify tag\".", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Products Total Cubic Inches", "description": "Total cubic inches of all products in an order. Includes any products that are autofulfilled.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "Sales tax", "description": "Looks at sales tax line in order.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "Shipping and billing address 1 match", "description": "The shipping and billing on address line 1 match.", "conditions": "Yes, no.", "multiWarehouse": "No"}, {"name": "Shipping and billing Zip match", "description": "The shipping address and billing address zip codes match.", "conditions": "Yes, no.", "multiWarehouse": "No"}, {"name": "Shipping carrier", "description": "The shipping carrier that the order is assigned to (example: UPS, USPS, FedEx, etc.). The carrier is set by mapping shipping methods, this is not information that is pulled from the shopping cart and should not be confused with shipping method or shipping name.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Shipping method", "description": "This is the shipping method that the order is assigned to. (example: 2 Day, Ground, Express). This is not information pulled from the shopping cart, rather it is set by carrier mapping and should not be confused with Shipping Carrier or Shipping Name.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Shipping name", "description": "This is the Shipping name as it comes in from the shopping cart. i.e. the shipping service that the customer selects at checkout (example: Free Shipping, Economy, International Economy)", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Shipping price", "description": "Price the end customer paid when they placed the order. This comes from the shopping cart.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "Shopify item assigned to location", "description": "This is the location an item is assigned to in Shopify. This only works if the setting is enabled in the store settings page \"Save Item Fulfillment Location When Importing Orders\" Location options are selected from a dropdown.", "conditions": "Equals, not equals, in list, not in list.", "multiWarehouse": "No"}, {"name": "SKU", "description": "This is triggered by the SKU on the order.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "SKU quantity", "description": "This condition is only available when a SKU is triggered first (ex. If SKU is AND SKU quantity)", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": ""}, {"name": "State", "description": "The state as it appears in the Shipping address. This expects the two character state abbreviation.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Store Name", "description": "Store name as it appears on the order details in the \"Store\" field. Often a url for Shopify stores (example: my-store.myshopify.com). It's important to validate how it appears before using this trigger. This field is dynamic in manual order uploads and API created orders and is an excellent trigger to use when order uploads are a large part of your business.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}, {"name": "Subtotal", "description": "Pre-tax/pre-shipping total on order. Comes directly from sales channel.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "Sum of line items pending quantities", "description": "All pending line items and quantities on an order (would not include canceled or fulfilled line items)", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": ""}, {"name": "Sum of line items quantities", "description": "Total items on an order (line items plus quantities of line items). Includes autofulfilled products.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "Time of Day (HH:MM[am/pm])", "description": "Time on order import (when automation rule is triggered). This is always in the customer's time zone.", "conditions": "Greater than, greater than or equal to, less than, less than or equal to.", "multiWarehouse": "No"}, {"name": "Total weight of products in the order in ounces (oz)", "description": "Total weight of all products on order. Includes autofulfilled products.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": "No"}, {"name": "USPS Zone", "description": "USPS Shipping zone as determined by the origin zip (taken from the profile assigned to the order) and the destination zip. If you are using automation rules to set the profile, it's important to do so before this rule.", "conditions": "Equals, not equals, greater than, greater than or equal to, less than, less than or equal to, in list, not in list.", "multiWarehouse": ""}, {"name": "Zipcode", "description": "Shipping address zipcode.", "conditions": "Equals, not equals, contains, starts with, ends with, greater than, greater than or equal to, less than, less than or equal to, in list, not in list, in list contains, not in list contains, does not contain, not ends with, in list starts with, not in list starts with, in list ends with, not in list ends with, not starts with.", "multiWarehouse": "No"}];
+const ACTIONS  = [{"name": "Add a SKU", "description": "Adds a new SKU to the order. This SKU will not be attached to the shopping cart.", "useCase": "Mostly used to add promotional or free items to orders.", "category": "Line Items"}, {"name": "Add Gift Note", "description": "Adds a note in the Gift Note field in ShipHero. Gift notes print on the packing slips and also hide the price and billing address on an invoice. Note: ShipHero uses the words packing slip and invoice interchangeably. We call it a packing slip when it's designated as a gift invoice (no prices, no billing address, may or may not have a gift note)", "useCase": "Used when a gift message is required or offered at checkout.", "category": "Internal Notes"}, {"name": "Add Order History", "description": "Adds a note to the order history on the order logs.", "useCase": "Good for audit trails and logging actions taken on different platforms like Shopify.", "category": "Internal Notes"}, {"name": "Add Warehouse Note", "description": "Adds a note to the Warehouse Note section on an order. This message will also appear to the packer when they open the order on the packing station app.", "useCase": "Used when additional instructions are needed for a packer, such as wrap as fragile, or if there are specific packing instructions.", "category": "Internal Notes"}, {"name": "Add X units of a SKU", "description": "Adds multiple quantities of a single SKU.", "useCase": "If you ever need to add more than a single unit of a SKU that is not a line item in the ecomm store.", "category": "Line Items"}, {"name": "Add X units of a SKU for every Y units ordered", "description": "Adds a certain amount of a SKU when the SKU that triggered the rule is ordered.", "useCase": "If a merchant has an insert that is unit based this rule works the best. For example: For each pair of sunglasses ordered, I want to add a sunglass case.", "category": "Line Items"}, {"name": "Apply discount to Customs Value", "description": "If the order is discounted for the customer at time of checkout, that discount is applied to the customs invoice.", "useCase": "Applies any discounts made to the order from checkout (like coupon codes, etc.) to the customs value on customs invoices.", "category": "International Orders"}, {"name": "Auto-print shipping labels", "description": "This automatically prints the shipping label once all items in an order have been packed.", "useCase": "When a box is preset this action is used to start the action of rate shopping and label generation as soon as all items on an order have been packed (scanned). This removes a button click from the packer and speeds up the whole process by a few seconds.", "category": "Order Processing"}, {"name": "Call URL", "description": "When an automation rule is triggered, the system automatically sends an HTTP POST notification to the URL you've registered. The notification includes: Account ID, Account UUID, Order ID, Shop name, Order number, Partner Order ID, and a custom message you define in the rule.", "useCase": "Connects ShipHero automation rules to external systems and workflows. Examples: trigger a Zapier or Make.com webhook, notify an ERP when a high-value order comes in, alert a custom WMS when orders meet specific criteria, or pass order data to any platform that accepts HTTP POST. Essentially the integration layer between ShipHero and your broader tech stack.", "category": "External Integrations"}, {"name": "Cancel items", "description": "Cancels the line items that trigger the rule. Canceling lines does not affect the shopping cart.", "useCase": "Used to handle items on an order that are fulfilled outside of ShipHero.", "category": "Line Items"}, {"name": "Cancel the entire order but don't cancel on platform", "description": "Cancels the entire order in ShipHero but will not cancel the order in the shopping cart/sales channel.", "useCase": "Used to handle cases where an entire order is going to be fulfilled by someone else outside of ShipHero.", "category": "Line Items"}, {"name": "Change SKU", "description": "Changes the SKU on the order. Orders are updated by line item ID, so even if the SKU on the order is changed via this rule, the store will still be updated when this line is fulfilled.", "useCase": "This one gets complicated. Typical use case is to swap out an eaches SKU with a cases SKU when it makes sense to pick an entire case using multi item or single item batch. For this use case it must be used in conjunction with the rule to remove x amount of units for every y unit ordered.", "category": "Line Items"}, {"name": "Create dropship for vendor (only items in the order)", "description": "Any items assigned to vendor triggering the rule will be flagged as dropship only.", "useCase": "Used when items assigned to a specific vendor should be fulfilled directly by that vendor (dropshipped) rather than shipped from your warehouse. Used for dropship-only products or vendor-managed inventory arrangements.", "category": "Order Processing"}, {"name": "Delete all instances of a SKU", "description": "Deletes all instances of the SKU that triggered the action.", "useCase": "", "category": "Line Items"}, {"name": "Delete one unit of a SKU", "description": "Deletes one unit of the SKU that triggered the rule.", "useCase": "Reduces the triggered SKU's quantity by one unit. Often paired with 'Change SKU' rules in a case-pack conversion workflow: delete one each-unit, then add the corresponding case-pack SKU.", "category": "Line Items"}, {"name": "Disable shipment notification", "description": "Disables the shipment notification when an order ships in ShipHero. Line items will not be updated to fulfilled in Shopify and email notification is not sent to customer.", "useCase": "If the customer wants an action to happen in the shopping cart other than the shipment notification email they typically disable the notification from ShipHero and update it manually in the store. Most common use case for this is for buy online pickup in store purchases in order to properly notify the customer when the order is ready for pick up.", "category": "Internal Notes"}, {"name": "Do not print the invoice", "description": "Will not print the invoice/packing slip for the order. (Button will still appear but nothing will print)", "useCase": "If there are only specific orders that the packing slip needs to be disabled for then this rule is used. If it's all orders then the change can be made at the packing station to only print shipping labels.", "category": "Order Processing"}, {"name": "Lock items to warehouse", "description": "Used in conjunction with Multi Warehouse accounts or with Multi Warehouse Allocation rules. This locks specific products on an order to a specific warehouse. If also a Multi Warehouse Allocation account (Most brands and all 3PLs), then a corresponding MWA rule is required for ShipHero to honor the automation rule assignment.", "useCase": "Best use is for fulfilling items from warehouses based on the location assigned to the item in Shopify (helps us honor Shopify order routing instead of ShipHero)", "category": "Order Allocation"}, {"name": "Remove X units of a SKU for every Y unit ordered", "description": "Removes a certain quantity of the SKU in the actions for every SKU that triggered the rule is ordered.", "useCase": "Typically used in conjunction with the SKU change rule to replace eaches with cases.", "category": "Line Items"}, {"name": "Send email", "description": "Sends an email message to the address indicated in the action (this is static)", "useCase": "Notifies a member of the team that some action needs to be taken.", "category": "Internal Notes"}, {"name": "Set a custom status", "description": "Sets a custom status on the order. A custom status is always an unfulfilled status. It is used for separating orders for different workflows.", "useCase": "Targeting express or priority orders, separating large orders from regular orders so totes don't overflow. Any other time you want to separate orders from the rest of the pack.", "category": "Order Processing"}, {"name": "Set address hold", "description": "Puts an order on hold. Hold type is address hold.", "useCase": "If there is a known address that gets updated incorrectly via address validation you can use this to put it on hold anyways. A good example is in Shopify Puerto Rico is flagged as being in the United States, but UPS considers it (in its system) its own country. As a result, all shipments to Puerto Rico coming in from Shopify that are mapped to UPS will product an invalid label error at the packing station.", "category": "Order Holds"}, {"name": "Set adult signature required", "description": "This is tied to the carrier label. Carrier selected must support adult signature (+21)", "useCase": "Eliminates the need for the packer to do this or for the CS team to remember to do this.", "category": "Shipping Options"}, {"name": "Set alcohol tag", "description": "Tells the carrier the order contains alcohol. Usually this requires adult signature and may trigger other carrier shipping processes.", "useCase": "Eliminates the need for the packer to do this or for the CS team to remember to do this.", "category": "Shipping Options"}, {"name": "Set allocation priority", "description": "Allocation priority is default of no other priority is set. Allocation priority low allows a higher priority allocation to take inventory from that order. Allocation priority High will take inventory from a Low priority order. Default allocation allocates inventory by order date. Inventory remains allocated to backordered orders and orders on hold.", "useCase": "If a large order is on backorder but partially allocated you can use this to steal inventory from it and put it on another order so it can ship.", "category": "Order Allocation"}, {"name": "Set allow partial", "description": "Allows the order to ship even if it's partially allocated (unless the SKUs on the order are kits)", "useCase": "Item on backorder for an extended period of time but you want to ship the available inventory now.", "category": "Order Processing"}, {"name": "Set auto-generate RMA", "description": "Automatically creates an RMA (Return Merchandise Authorization) aka return order in ShipHero.", "useCase": "Typically for companies that offer free returns and have a return rate of 30% or more. Takes the pain off of customer and customer service.", "category": "Return Options"}, {"name": "Set auto print return label", "description": "Automatically prints a return shipping label using the carrier that is configured under My Account > Settings > Returns settings.", "useCase": "Typically for companies that offer free returns and have a return rate of 30% or more. Takes the pain off of customer and customer service. Any company's offering a try before you buy or trial period.", "category": "Return Options"}, {"name": "Set box to use", "description": "Sets the shipping box to use. Box must be set to active under Shipping > Boxes.", "useCase": "Eliminates the need for the packer to guess the size of the box, speeding up the packing process and reducing shipping errors as well as reducing high shipping costs incurred by using too big of boxes (volumetric billing instead of weight billing)", "category": "Order Processing"}, {"name": "Set Currency", "description": "Sets the currency on the order if different from the default set under My Account > Settings.", "useCase": "If shipping internationally and they want the currency to reflect.", "category": "International Orders"}, {"name": "Set dry ice weight", "description": "Adds the weight of dry ice as signaled in the automation to the total weight of the order at the packing station.", "useCase": "Food customers pack dry ice but dry ice isn't a SKU, however, the weight will affect the shipping cost. Additionally, dry ice usually has to ship specific services.", "category": "Shipping Options"}, {"name": "Set FedEx Dangerous Goods", "description": "Sends a JSON to FedEx with the dangerous goods code. Requires assistance from support@shiphero.com to provide the correct JSON.", "useCase": "Required for FedEx shipments containing federally regulated hazardous materials (e.g., lithium batteries, aerosols, flammable liquids). Ensures proper hazmat declarations on the label and prevents shipment rejection or carrier fines. Setup requires coordination with ShipHero support to provide the correct JSON payload.", "category": "Shipping Options"}, {"name": "Set fraud hold", "description": "Puts a hold on the order or removes this type of hold on an order.", "useCase": "If there is a known suspicious domain or person that places fraudulent orders you can set a rule to put them on hold.", "category": "Order Holds"}, {"name": "Set FTR exemption", "description": "Sets an FTR exemption code for the specified country and product. List of currently supported FTR codes with descriptions can be found here: https://software-help.shiphero.com/hc/en-us/articles/4419353961357-EEI-and-FTR-Exemptions.", "useCase": "FTR exemptions vary by destination country and are very specific. This is the only way to set them on an order proactively.", "category": "International Orders"}, {"name": "Set gift invoice", "description": "Makes the invoice into a gift invoice (aka packing slip). Gift invoices do not have the prices nor the billing address present.", "useCase": "If you don't want the recipient to see what was paid or the prices aren't real (like a manual order with 0 values)", "category": "Shipping Options"}, {"name": "Set hold until date ahead to X days from now", "description": "Puts the order on hold for the amount of days specified in the rule. The hold is removed automatically after the specified time has elapsed.", "useCase": "If a customer doesn't want something to ship for a period of time this is a good way to prevent it from shipping but it won't matter if you forget to take it off hold because the system will do that for you after the days have elapsed. Also Commonly used to give customers a chance to make order edits before it ships out.", "category": "Order Holds"}, {"name": "Set hold until date ahead to X hours from now", "description": "Puts the order on hold for the amount of hours specified in the rule. The hold is removed automatically after the specified time has elapsed.", "useCase": "Commonly used to give customers a chance to make order edits before it ships out.", "category": "Order Holds"}, {"name": "Set hold until date and time", "description": "Places hold on the order until the date and time specified in actions has elapsed.", "useCase": "If a customer doesn't want something to ship for a period of time this is a good way to prevent it from shipping but it won't matter if you forget to take it off hold because the system will do that for you after the days have elapsed.", "category": "Order Holds"}, {"name": "Set ignore address validation errors", "description": "Ignores address validation errors, does not update the address from what it imports as and enables the ignore address validation errors flag on the order.", "useCase": "Use for known valid addresses that fail automated validation. Typical when new neighborhoods are built and have not been updated yet in USPS database.", "category": "Order Holds"}, {"name": "Set insurance", "description": "Sets insurance based on sum of products retail value.", "useCase": "High value shipments and items that are hard to replace.", "category": "Shipping Options"}, {"name": "Set insurance amount based on product value", "description": "Sets shipping insurance based on the sum of product value (replacement cost)", "useCase": "High value shipments and items that are hard to replace, replacement cost is just the cost of the item, most likely used for business to business type shipments or shipments to a foreign country since it would be cheaper to insure than retail value.", "category": "Shipping Options"}, {"name": "Set operator hold", "description": "Puts a hold on the order or removes this type of hold on an order.", "useCase": "If there is a known problem with a type of order you can automate the system to put it on hold.", "category": "Order Holds"}, {"name": "Set order incoterms", "description": "Sets an order as DDP (deliver duties paid) or DDU (deliver duties unpaid)", "useCase": "The default for carriers shipping internationally as DDP or DDU is set in the carrier settings. If you want to conditionally change an order from the default setting for that carrier you use this action.", "category": "International Orders"}, {"name": "Set order tag", "description": "Adds a tag to the order.", "useCase": "Tags are great for filtering and searching for orders and for assigning orders to specific warehouse employees. Anytime you write an automation rule, you should always add a tag as an additional action. The tag itself does not do anything, but it can be very helpful to have in the future.", "category": "Order Processing"}, {"name": "Set order tax ID and type", "description": "Sets order tax type: VAT, IOSS, EORI, RFC, CPF/CNPJ, Resident ID Number. ID is free form type.", "useCase": "These are the specified tax ID numbers for shipping to different entities or international countries. The code differs based on region you are shipping to. The.", "category": "International Orders"}, {"name": "Set payment hold", "description": "Puts a hold on the order or removes this type of hold on an order.", "useCase": "If an order is shipping terms or B2B and the customer still wants it to import into ShipHero (even if it's unpaid in Shopify) then they can use this rule to automatically add the payment hold. You can also use this rule to remove payment holds by applying a tag to the order in Shopify and running the rule off of the tag. Rule will run on that specific tag's import.", "category": "Order Holds"}, {"name": "Set phone number", "description": "Sets a phone number on the order.", "useCase": "Many carriers require a phone number on shipments. This is usually used in conjunction with the phone number trigger to add a valid number if there isn't one on an order.", "category": "Edit Order Info"}, {"name": "Set priority flag", "description": "Enables the priority flag on an order. This is not the same as allocation priority.", "useCase": "The priority flag on an order moves it up in the picking and packing queues. For picking this only works if you sort batches by required ship date and priority.", "category": "Order Processing"}, {"name": "Set profile", "description": "Assigns a specific warehouse profile to the order.", "useCase": "Warehouse profiles stay with an order throughout the entire order lifecycle, unlike statuses, which change after an order has been fulfilled or canceled. Profiles can be used to dictate which carrier account is billed for 3rd party shipments. They can also be used when data needs to be pulled from the API for reporting purposes, since profile doesn't change you can query all orders of a certain profile. Profiles can also be used for 3PL billing, you can bill orders differently that are in different profiles. Very often this is used when customers bill B2B fulfillment orders differently from D2C orders.", "category": "Shipping Options"}, {"name": "Set requires signature", "description": "Sets the flag \"signature required\" on an order. Only carriers that provide this service will be eligible in the rate shopping.", "useCase": "Use for high-value orders, shipments to high-theft areas, or products requiring proof of delivery (e.g., alcohol, age-restricted items). Only carriers and services supporting signature confirmation will be eligible during rate shopping on these orders.", "category": "Shipping Options"}, {"name": "Set required ship date ahead to X business days", "description": "Sets the required ship date ahead based of number of days indicated in action. This overrides the default or the ship date set by carrier mapping.", "useCase": "If an order is more complicated or takes more time to fulfill, this is a good option to work those orders into your SLA without them appearing late.", "category": "Order Processing"}, {"name": "Set return warehouse", "description": "This rule automatically sets the profile of the warehouse that you want to use as your ship to address for return shipping labels generated either automatically or by creating a return order.", "useCase": "If the default return warehouse on RMA creation or return shipping label creation should be different from the warehouse the order has been allocated to, this is the rule to use.", "category": "Return Options"}, {"name": "Set return weight", "description": "Defaults the return shipping weight when an RMA is generated against this order.", "useCase": "Shipping labels for RMAs require a shipping weight and it defaults to what the outbound order weight was. However, returns don't always contain the full order (I ordered 4 items but I am only returning 1). This helps control the amount that is charged for return labels.", "category": "Return Options"}, {"name": "Set Saturday delivery flag", "description": "Adds saturday service for carriers that don't deliver 7 days a week.", "useCase": "If saturday delivery is required and you are using a day definite service, like fedex express or ups express, this will include saturday in the number of days for delivery. Otherwise, saturday does not count since it isn't a business day. This is not something that can be used with business addresses.", "category": "Shipping Options"}, {"name": "Set shipping method", "description": "Sets the shipping method, overrides shipping mapping.", "useCase": "If there is a regional carrier that is set up via API you can use this to set that carrier and override the shipping mapping, since the shipping mapping will only rate shop against natively connected carriers. Also good for overriding rules, for example, if a shipment is mapped to FedEx or UPS but it is being delivered to a PO box, military base, alaska, hawaii, or an outlying island, you would likely use this rule to change the carrier to USPS. This avoids label printing errors at the pack station.", "category": "Shipping Options"}, {"name": "Set tote QA", "description": "Enables tote QA on the order, which requires the packer to scan all items in the tote. This can also be enabled at the user level instead of through automation rules.", "useCase": "If most orders should be autopacked but you have some exceptions you would use this.", "category": "Order Processing"}, {"name": "Set Workflow", "description": "Assigns an order to a custom workflow. Must be triggered by a product tag or attribute. Does not work on order tags or order level attributes.", "useCase": "A workflow adds a workstation to the picking flow in the event that work needs to be completed to an item on the order before shipping, such as embroidery, engraving, or screen printing.", "category": "Order Processing"}, {"name": "Toggle wholesale", "description": "Flags the order as wholesale so it goes through the wholesale flow instead of through multi item or single item batch. Switches to the wholesale packing flow if shipped at the packing station.", "useCase": "Puts an order through the wholesale workflow instead of Multi item or single item batch.", "category": "Order Processing"}];
+let currentTab = 'triggers';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-triggers').classList.toggle('active', tab==='triggers');
+  document.getElementById('tab-actions').classList.toggle('active',  tab==='actions');
+  document.getElementById('cat-filter').style.display = tab==='actions' ? '' : 'none';
+  document.getElementById('col-lbl-t').style.display  = tab==='triggers' ? '' : 'none';
+  document.getElementById('col-lbl-a').style.display  = tab==='actions'  ? '' : 'none';
+  document.getElementById('search').placeholder = tab==='triggers' ? 'Search triggers…' : 'Search actions…';
+  render();
+}
+
+function hl(text, q) {
+  if (!q || !text) return esc(text||'');
+  const re = new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+  return esc(text).replace(re,'<mark>$1</mark>');
+}
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function matches(item, q) {
+  if (!q) return true;
+  const l = q.toLowerCase();
+  return Object.values(item).some(v => v && String(v).toLowerCase().includes(l));
+}
+function toggle(id) { document.getElementById(id)?.classList.toggle('open'); }
+
+const chev = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+
+function render() {
+  const q   = document.getElementById('search').value.trim();
+  const cat = document.getElementById('cat-filter').value;
+  const data = currentTab==='triggers' ? TRIGGERS : ACTIONS;
+  const filtered = data.filter(item => matches(item,q) && (!cat||item.category===cat));
+
+  document.getElementById('cnt-triggers').textContent = currentTab==='triggers' ? filtered.length : TRIGGERS.length;
+  document.getElementById('cnt-actions').textContent  = currentTab==='actions'  ? filtered.length : ACTIONS.length;
+  document.getElementById('result-count').textContent =
+    filtered.length===data.length
+      ? `${data.length} ${currentTab==='triggers'?'triggers':'actions'}`
+      : `${filtered.length} of ${data.length} shown`;
+
+  if (!filtered.length) {
+    document.getElementById('cards').innerHTML = `<div class="empty">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <p>No results for <strong>"${esc(q)}"</strong>. Try different keywords.</p>
+    </div>`;
+    return;
+  }
+
+  document.getElementById('cards').innerHTML = filtered.map((item,i) => {
+    const id = `c-${currentTab}-${i}`;
+    if (currentTab==='triggers') {
+      const mw = item.multiWarehouse?.toLowerCase()==='yes';
+      return `<div class="card" id="${id}">
+        <div class="card-header t-row" onclick="toggle('${id}')">
+          <div class="name-cell">
+            <span class="item-name">${hl(item.name,q)}</span>
+            ${mw ? '<span class="badge mw">Runs after MWA</span>' : ''}
+          </div>
+          <span class="desc-preview">${hl(item.description||'',q)}</span>
+          <div class="chevron">${chev}</div>
+        </div>
+        <div class="card-body">
+          ${item.description?`<div class="field"><div class="field-lbl">Description</div><div class="field-val">${hl(item.description,q)}</div></div>`:''}
+          ${item.conditions?`<div class="field"><div class="field-lbl">Available Conditions</div><div class="field-val">${hl(item.conditions,q)}</div></div>`:''}
+          ${mw?'<div class="field"><div class="badge-row"><span class="badge mw">Only runs after Multi-Warehouse Allocation rules</span></div></div>':''}
+        </div>
+      </div>`;
+    } else {
+      return `<div class="card" id="${id}">
+        <div class="card-header a-row" onclick="toggle('${id}')">
+          <div class="name-cell">
+            <span class="item-name">${hl(item.name,q)}</span>
+            ${item.category?`<span class="badge cat">${hl(item.category,q)}</span>`:''}
+          </div>
+          <span class="desc-preview">${hl(item.description||'',q)}</span>
+          <div class="chevron">${chev}</div>
+        </div>
+        <div class="card-body">
+          ${item.description?`<div class="field"><div class="field-lbl">Description</div><div class="field-val">${hl(item.description,q)}</div></div>`:''}
+          ${item.useCase?`<div class="field"><div class="field-lbl">Typical Use Case</div><div class="field-val">${hl(item.useCase,q)}</div></div>`:''}
+          ${item.category?`<div class="field"><div class="field-lbl">Category</div><div class="badge-row"><span class="badge cat">${hl(item.category,q)}</span></div></div>`:''}
+        </div>
+      </div>`;
+    }
+  }).join('');
+}
+
+render();
+</script>
+</body>
+</html>
